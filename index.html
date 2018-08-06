@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="node_modules/angular/angular.min.js"></script>
+    <link href="node_modules/angular/angular-csp.css" rel="stylesheet" type="text/css">
+    <script>
+      (function (){
+
+        var app = angular.module('todo', []);
+
+        app.controller('TodoCtrl', ['$scope',function($scope){
+          $scope.todos = [
+            {
+              id: 1,
+              title: '제목1',
+              completed: false,
+              createAt: Date.now()
+            },
+            {
+              id: 2,
+              title: '제목2',
+              completed: false,
+              createAt: Date.now()
+            },
+            {
+              id: 3,
+              title: '제목3',
+              completed: true,
+              createAt: Date.now()
+            }
+          ];
+          $scope.remove = function(todo){
+            var idx = $scope.todos.findIndex(function(item){
+              return item.id === todo.id;
+            })
+            if(idx > -1){
+              $scope.todos.splice(idx, 1);
+            }
+          }
+        }]);
+
+      })();
+    </script>
+  </head>
+  <body ng-app="todo" ng-controller="TodoCtrl">
+    <h1>Todo</h1>
+    <div>{{ todos }}</div>
+    <ul>
+      <li ng-repeat="todo in todos | filter:statusFilter">
+        <h2>{{ todo.title }}</h2>
+        <input type="checkbox" ng-model="todo.completed">
+        <input type="text" ng-model="todo.title">
+        <button ng-click="remove(todo)">Delete</button>
+        <span>{{ todo.createAt | date:'yyyy-MM-dd hh:mm:ss' }}</span>
+      </li>
+    </ul>
+    <div>
+      <button ng-click="statusFilter={completed:true}">Completed</button>
+      <button ng-click="statusFilter={completed:false}">Active</button>
+      <button ng-click="statusFilter={}">All</button>
+    </div>
+  </body>
+</html>
