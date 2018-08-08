@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="node_modules/angular/angular.min.js"></script>
+    <style>
+      .ng-valid.ng-dirty {
+        background: lightblue;
+      }
+      .ng-invalid.ng-dirty {
+        background: pink;
+      }
+    </style>
+    <script>
+      (function (){
+
+        var app = angular.module('todo', []);
+
+        angular.module('todo').controller('TodoCtrl', ['$scope',function($scope){
+          $scope.todos = [
+            {
+              title: '제목1',
+              completed: false,
+              createAt: Date.now()
+            },
+            {
+              title: '제목2',
+              completed: false,
+              createAt: Date.now()
+            },
+            {
+              title: '제목3',
+              completed: true,
+              createAt: Date.now()
+            }
+          ];
+          $scope.remove = function(todo){
+            var idx = $scope.todos.findIndex(function(item){
+              return item.title === todo.title;
+            })
+            if(idx > -1){
+              $scope.todos.splice(idx, 1);
+            }
+          };
+          $scope.add = function(newTodoTitle){
+            var newTodo = {
+              title: newTodoTitle,
+              completed: false,
+              createAt: Date.now()
+            }
+            $scope.todos.push(newTodo);
+            $scope.newTodoTitle = '';
+          };
+        }]);
+
+      })();
+    </script>
+  </head>
+  <body ng-app="todo" ng-controller="TodoCtrl">
+    <h1>todo app</h1>
+    <hr>
+    <h2>list</h2>
+    <ul>
+      <li ng-repeat="todo in todos | filter:statusFilter">
+        <input type="checkbox" ng-model="todo.completed">
+        <input type="text" ng-model="todo.title">
+        <button ng-click="remove(todo)">Delete</button>
+        <span>{{ todo.createAt | date:'yyyy-MM-dd hh:mm:ss' }}</span>
+      </li>
+    </ul>
+    <hr>
+    <pre>{{ todos | json }}</pre>
+    <hr>
+    <div>
+      <h2>filter button</h2>
+      <button ng-click="statusFilter={completed:true}">Completed</button>
+      <button ng-click="statusFilter={completed:false}">Active</button>
+      <button ng-click="statusFilter={}">All</button>
+    </div>
+    <hr>
+    <div>
+      <h2>add form</h2>
+      <form name="todoForm" ng-submit="add(newTodoTitle)">
+        <input type="text" ng-model="newTodoTitle" placeholder="input new todo" minlength="3">
+        <button type="submit">Add</button>
+        <div ng-show="todoForm.$dirty && todoForm.$invalid">
+          <div>3글자 이상 입력하시오.</div>
+        </div>
+      </form>
+      <pre>{{ todoForm | json }}</pre>
+    </div>
+    <hr>
+  </body>
+</html>
